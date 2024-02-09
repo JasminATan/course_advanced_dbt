@@ -41,4 +41,4 @@
 ### Week 3
 - Task 1: Redundant tests removed from the source yaml if it is covered by staging or further upstream
 - Task 2: Custom generic test added to address test events
-- Task 3: unit testing of rpt_mrr. The seed files were not pushed to github as they were too large (kept in the local repo only). Please note this task is on a separate branch - 'week-3-task-3-unit-testing'
+- Task 3: unit testing of rpt_mrr. The seed files were not pushed to github as they were too large (kept in the local repo only)
