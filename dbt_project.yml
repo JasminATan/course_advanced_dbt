@@ -54,7 +54,6 @@ seeds:
     dbt_project_evaluator_exceptions:
       +enabled: false
 
-  unit_testing:
     unit_testing:
       +schema: unit_testing
       +tags: unit_testing
