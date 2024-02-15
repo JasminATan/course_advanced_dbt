@@ -11,7 +11,7 @@ WITH source AS (
 
 {% if is_incremental() %}
     WHERE 1=1
-    AND created_at > (SELECT MAX(created_at) FROM {{ this }})
+    AND created_at > (SELECT DATEADD('day', -3, MAX(created_at)) FROM {{ this }})
 {% endif %}
 
 ),
