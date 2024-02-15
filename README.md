@@ -42,3 +42,60 @@
 - Task 1: Redundant tests removed from the source yaml if it is covered by staging or further upstream
 - Task 2: Custom generic test added to address test events
 - Task 3: unit testing of rpt_mrr. A sample of input and output seed files used
+
+
+## dbt-Snowflake monitorinng
+### Top 5 costliest dbt queries you've run in the last 30 days
+``with
+max_date as (
+    select max(date(end_time)) as date
+    from dev.dbt_jasmintanbrooklyndataco.query_history_enriched
+    where user_name = 'jasmintanbrooklyndataco'
+)
+select
+    md5(query_history_enriched.query_text_no_comments) as query_signature,
+    any_value(query_history_enriched.query_text) as query_text,
+    sum(query_history_enriched.query_cost) as total_cost_last_30d,
+    total_cost_last_30d*12 as estimated_annual_cost,
+    max_by(warehouse_name, start_time) as latest_warehouse_name,
+    max_by(warehouse_size, start_time) as latest_warehouse_size,
+    max_by(query_id, start_time) as latest_query_id,
+    avg(execution_time_s) as avg_execution_time_s,
+    count(*) as num_executions
+from dev.dbt_jasmintanbrooklyndataco.query_history_enriched
+cross join max_date
+where
+    query_history_enriched.start_time >= dateadd('day', -30, max_date.date)
+    and query_history_enriched.start_time < max_date.date -- don't include partial day of data
+    and user_name = 'jasmintanbrooklyndataco'
+group by 1
+order by total_cost_last_30d desc
+limit 5;``
+
+### Top 5 costliest dbt models you've run in the last 30 days
+``with
+max_date as (
+    select max(date(end_time)) as date
+    from dev.dbt_jasmintanbrooklyndataco.dbt_queries
+)
+select
+    dbt_queries.dbt_node_id,
+    sum(dbt_queries.query_cost) as total_cost_last_30d,
+    total_cost_last_30d*12 as estimated_annual_cost
+from dev.dbt_jasmintanbrooklyndataco.dbt_queries
+cross join max_date
+where
+    dbt_queries.start_time >= dateadd('day', -30, max_date.date)
+    and dbt_queries.start_time < max_date.date -- don't include partial day of data
+group by 1
+order by total_cost_last_30d desc
+limit 5;``
+
+### Daily cost of running your most expensive dbt model
+``select
+    date(start_time) as date,
+    sum(query_cost) as cost
+from dev.dbt_jasmintanbrooklyndataco.dbt_queries
+where dbt_node_id = 'model.dbt_snowflake_monitoring.stg_query_history'
+group by 1
+order by 1 desc;``
