@@ -42,6 +42,10 @@
 - Task 1: Redundant tests removed from the source yaml if it is covered by staging or further upstream
 - Task 2: Custom generic test added to address test events
 - Task 3: unit testing of rpt_mrr. A sample of input and output seed files used
+### Week 4
+- Task 1: Incrementalized stg_events, including rollback of 3 days and macro for the incrementalization
+- Task 2: dbt-snowflake-monitoring package installed - queries to monitor cost copied below
+- Task 3: Refactored the finance model fct_mrr.sql by moving logic to intermediate models. Next step is to create the yaml files for the int models!
 
 
 ## dbt-Snowflake monitorinng
