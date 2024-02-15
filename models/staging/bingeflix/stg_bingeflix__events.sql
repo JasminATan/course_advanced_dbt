@@ -1,6 +1,18 @@
+{{
+    config(
+        materialized='incremental',
+        unique_key='event_id'
+    )
+ }}
+
 WITH source AS (
 
     SELECT * FROM {{ source('bingeflix', 'events') }}
+
+{% if is_incremental() %}
+    WHERE 1=1
+    AND created_at > (SELECT MAX(created_at) FROM {{ this }})
+{% endif %}
 
 ),
 
